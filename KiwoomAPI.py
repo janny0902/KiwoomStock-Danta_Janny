@@ -1,10 +1,12 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QAxContainer import *
 from PyQt5.QtCore import *
+import time
 
 class KiwoomAPI(QAxWidget):
     def __init__ (self):
         super().__init__()
+        self.output_list = []
         self.set_kiwoom_api()
         self.set_event_slot()
 
@@ -50,3 +52,14 @@ class KiwoomAPI(QAxWidget):
         ret = self.dynamicCall('GetLoginInfo(String)', kind)
 
         print(ret)
+        
+    def CommRqData(self, sRQName, sTrCode, nPrevNext, sScreenNo):
+        ret = self.dynamicCall('CommRqData(String, String, int, String)', sRQName, sTrCode, nPrevNext, sScreenNo)
+        self.event_loop_CommRqData = QEventLoop()
+        self.event_loop_CommRqData.exec_()   
+
+    def wait_secs(self,msg, secs=10):        
+        while secs > 0:
+            time.sleep(1)
+            print(f"{msg} waiting: {secs}")
+            secs = secs - 1

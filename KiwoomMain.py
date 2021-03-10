@@ -1,5 +1,6 @@
 import sys
 from PyQt5.QtWidgets import *
+from Config import *
 import KiwoomAPI
 
 class KiwoonMain:
@@ -21,7 +22,21 @@ class KiwoonMain:
         self.kiwoom.GetLoginInfo("FIREW_SECGB")
         self.kiwoom.GetLoginInfo("GetServerGubun")
 
+    def myAccount(self):
+        self.kiwoom.output_list = output_list['OPW00018']        
+        self.kiwoom.SetInputValue("계좌번호"	,  '********')
+        self.kiwoom.SetInputValue("비밀번호"	, '****')     
+        self.kiwoom.SetInputValue("비밀번호입력매체구분"	,  "00")
+        self.kiwoom.SetInputValue("조회구분"	,  "2")
+        
+        self.kiwoom.dynamicCall("KOA_Functions(QString, QString)", "ShowAccountWindow", "")
+        self.kiwoom.wait_secs("계좌입력 시도", 1)
+      
+
     def run(self):
+        result = api_con.GetLoginInfo()
+        print(result)
+        api_con.myAccount()
 
         #### 주식 단타 프로그램 가이드 ####
         #### 중요!!! 개발 참여 3인 외 다른 사람에게 코드 공유 절대금지!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!------집중
@@ -58,14 +73,15 @@ class KiwoonMain:
                     # 5분봉기준 5일선 데드크로스시 매도
 
         #TODO 3. (좌니) 잔고조회 (현재 잔고 조회해서 보유종목및 수익률 확인 )  
+     
+        self.kiwoom.CommRqData( "RQName"	,  "opw00018"	,  "0"	,  "0391"); 
+        result_box =  self.kiwoom.ret_data['opw00018']   
 
         #TODO 4. (좌니) 다음날 매수 종목 미리 서칭 기능(거래량 , 상승률, 뉴스 등 포함) 
 
 
-
-        result = api_con.GetLoginInfo()
-        print(result)
-
+        print("program end")
+       
 
 app = QApplication(sys.argv)
 api_con = KiwoonMain()
