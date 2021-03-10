@@ -76,6 +76,7 @@ class KiwoonMain:
      
         self.kiwoom.CommRqData( "RQName"	,  "opw00018"	,  "0"	,  "0391"); 
         result_box =  self.kiwoom.ret_data['opw00018']   
+        print('test')
 
         #TODO 4. (좌니) 다음날 매수 종목 미리 서칭 기능(거래량 , 상승률, 뉴스 등 포함) 
 
