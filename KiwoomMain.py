@@ -1,6 +1,10 @@
 import sys
 from PyQt5.QtWidgets import *
+
 from Config import *
+from PyQt5.QtCore import *
+from PyQt5.QAxContainer import *
+from PyQt5 import QtTest
 import KiwoomAPI
 
 class KiwoonMain:
@@ -24,11 +28,12 @@ class KiwoonMain:
 
     def myAccount(self):
         self.kiwoom.output_list = output_list['OPW00018']        
-        self.kiwoom.SetInputValue("계좌번호"	,  '********')
-        self.kiwoom.SetInputValue("비밀번호"	, '****')     
+        self.kiwoom.SetInputValue("계좌번호"	,  '8156235411')
+        self.kiwoom.SetInputValue("비밀번호"	,  '0217')
+          
         self.kiwoom.SetInputValue("비밀번호입력매체구분"	,  "00")
         self.kiwoom.SetInputValue("조회구분"	,  "2")
-        
+        QTimer.singleShot(2 * 1000, self.kiwoom.auto_on)
         self.kiwoom.dynamicCall("KOA_Functions(QString, QString)", "ShowAccountWindow", "")
         self.kiwoom.wait_secs("계좌입력 시도", 1)
       
@@ -72,14 +77,14 @@ class KiwoonMain:
                     # 5분봉기준 전봉 거래량 기준 60% 이상 하락시 매도, (익절)
                     # 5분봉기준 5일선 데드크로스시 매도
 
-        #TODO 3. (좌니) 잔고조회 (현재 잔고 조회해서 보유종목및 수익률 확인 )  
+        #TODO 3. (좌니) 잔고조회 (현재 잔고 조회해서 보유종목및 수익률 확인 )         
+	
      
         self.kiwoom.CommRqData( "RQName"	,  "opw00018"	,  "0"	,  "0391"); 
-        result_box =  self.kiwoom.ret_data['opw00018']   
-        print('test')
+        result =  self.kiwoom.ret_data['opw00018']           
+        
 
         #TODO 4. (좌니) 다음날 매수 종목 미리 서칭 기능(거래량 , 상승률, 뉴스 등 포함) 
-
 
         print("program end")
        
