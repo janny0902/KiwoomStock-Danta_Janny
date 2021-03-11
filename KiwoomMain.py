@@ -39,9 +39,10 @@ class KiwoonMain:
       
 
     def run(self):
-        result = api_con.GetLoginInfo()
-        print(result)
-        api_con.myAccount()
+        ## 스케줄러 돌리기전 기본 시작 기능들 (로그인,계좌입력 등 기능)
+        result = api_con.GetLoginInfo()  #로그인(자동으로 변경 필요)
+        api_con.myAccount()              #계좌입력(자동 완성)
+        ####------------------------####
 
         #### 주식 단타 프로그램 가이드 ####
         #### 중요!!! 개발 참여 3인 외 다른 사람에게 코드 공유 절대금지!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!------집중
