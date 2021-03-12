@@ -30,13 +30,17 @@ class MathAPI:
             # data.insert(0, "Date", data.index)
             # data.insert(1, "korean_name", row['korean_name'])
             # data.insert(2, "english_name", row['english_name'])
+           
+
             
             arrOpen = np.asarray(data["open"], dtype='f8')
             arrHigh = np.asarray(data["high"], dtype='f8')
             arrLow = np.asarray(data["low"], dtype='f8')
             arrClose = np.asarray(data["close"], dtype='f8')
             arrVolume = np.asarray(data["volume"], dtype='f8')
+      
 
+            
             # 이동 평균 선
             data['SMA5'] = ta.SMA(arrClose, 5)
             # data['SMA10'] = talib.SMA(arrClose, 10)
@@ -90,6 +94,7 @@ class MathAPI:
 
         except Exception as ex:
             print(ex)
+
 
     
             
