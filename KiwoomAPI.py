@@ -6,6 +6,8 @@ import win32gui
 import win32con 
 import win32api
 
+TR_REQ_TIME_INTERVAL = 0.2
+
 class KiwoomAPI(QAxWidget):
     def __init__ (self):
         super().__init__()
@@ -25,6 +27,7 @@ class KiwoomAPI(QAxWidget):
         # 로그인 버전처리
         self.OnEventConnect.connect(self.E_OnEventConnect)
         self.OnReceiveTrData.connect(self.E_OnReceiveTrData)
+        
 
 # ========== #
     ### Event 함수 ###
@@ -65,7 +68,7 @@ class KiwoomAPI(QAxWidget):
 
         # self.Check_sRQName(sTrCode, sRQName)
         self.Call_TR(sTrCode, sRQName)
-
+        
         self.event_loop_CommRqData.exit()
 
     ####단일 종목 요청 함수
@@ -73,7 +76,7 @@ class KiwoomAPI(QAxWidget):
         ret = self.dynamicCall('CommRqData(String, String, int, String)', sRQName, sTrCode, nPrevNext, sScreenNo)
         self.event_loop_CommRqData = QEventLoop()
         self.event_loop_CommRqData.exec_()   
-
+        
     ####시간 대기 함수
     def wait_secs(self,msg, secs=10):        
         while secs > 0:
@@ -171,3 +174,5 @@ class KiwoomAPI(QAxWidget):
                 self.click_button(button)
         except Exception as e:
             print(e)   
+
+    

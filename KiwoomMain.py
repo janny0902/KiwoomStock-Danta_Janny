@@ -9,6 +9,7 @@ from PyQt5.QAxContainer import *
 from PyQt5 import QtTest
 import KiwoomAPI
 import MathAPI
+import pandas as pd
 
 class KiwoonMain:
     def __init__(self):
@@ -33,8 +34,8 @@ class KiwoonMain:
 
     def myAccount(self):
         self.kiwoom.output_list = output_list['OPW00018']        
-        self.kiwoom.SetInputValue("계좌번호"	,  '')
-        self.kiwoom.SetInputValue("비밀번호"	,  '')
+        self.kiwoom.SetInputValue("계좌번호"	,  '8156235411')
+        self.kiwoom.SetInputValue("비밀번호"	,  '0217')
           
         self.kiwoom.SetInputValue("비밀번호입력매체구분"	,  "00")
         self.kiwoom.SetInputValue("조회구분"	,  "2")
@@ -84,27 +85,32 @@ class KiwoonMain:
                     # 5분봉기준 전봉 거래량 기준 60% 이상 하락시 매도, (익절)
                     # 5분봉기준 5일선 데드크로스시 매도
 
+        #fdr = naver stock 데이터
         df = fdr.DataReader('005930')
         df = df.rename(columns=lambda col:col.lower())           
-            
+       
         data = self.mathsub.GetIndicator(df)
-        print(data)
+        print(data)    
+        
+        
+        
 
         #TODO 3. (좌니) 잔고조회 (현재 잔고 조회해서 보유종목및 수익률 확인 ) (완료)        
 	
-     
+        
         self.kiwoom.CommRqData( "RQName"	,  "opw00018"	,  "0"	,  "0391"); 
         result =  self.kiwoom.ret_data['opw00018']    
         print(result)
-        for stock in result['Data']:
-            print('----------------')
+
+        #for stock in result['Data']:
+        #    print('----------------')
             
-            print('종목번호',stock['종목번호'])
-            print('종목명',stock['종목명'])
-            print('보유수량',stock['보유수량'])
-            print('수익률',stock['수익률(%)'])
-            print('현재가',stock['현재가'])
-            print('매입가',stock['매입가'])      
+        #    print('종목번호',stock['종목번호'])
+        #    print('종목명',stock['종목명'])
+        #    print('보유수량',stock['보유수량'])
+        #    print('수익률',stock['수익률(%)'])
+        #    print('현재가',stock['현재가'])
+        #    print('매입가',stock['매입가'])      
 
         
 
