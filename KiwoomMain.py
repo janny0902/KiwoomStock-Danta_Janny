@@ -40,7 +40,7 @@ class KiwoonMain:
 
     def run(self):
         ## 스케줄러 돌리기전 기본 시작 기능들 (로그인,계좌입력 등 기능)
-        result = api_con.GetLoginInfo()  #로그인(자동으로 변경 필요)
+        result = api_con.GetLoginInfo()  #로그인( TODO 자동으로 변경 필요)
         api_con.myAccount()              #계좌입력(자동 완성)
         ####------------------------####
 
@@ -68,21 +68,32 @@ class KiwoonMain:
         #TODO 1-3-1. (정세현) 키움종목 매수 기능 -조건 설정  talib 이용
                     #5분봉 기준 20일선 골드 크로스 매수  
 
-        #TODO 2-1. (윤학) 키움 종목 매수 (한개 종목 코드를 입력하면 해당 종목 매수 기능 완료) 
+        #TODO 2-1. (윤학) 키움 종목 매수 (한개 종목 코드를 입력하면 해당 종목 매수 기능 ) 
         
 
-        #TODO 2-2. (윤학) 키움 종목 매도 (한개 종목 코드를 입력하면 해당 종목 매도 기능 완료) 
+        #TODO 2-2. (윤학) 키움 종목 매도 (한개 종목 코드를 입력하면 해당 종목 매도 기능 ) 
 
         #TODO 2-2-1 (좌니) 키움 종목 매도 기능 - 조건 설정  
                     # 호가 -1% 이상 넘으면 매도, (손절)
                     # 5분봉기준 전봉 거래량 기준 60% 이상 하락시 매도, (익절)
                     # 5분봉기준 5일선 데드크로스시 매도
 
-        #TODO 3. (좌니) 잔고조회 (현재 잔고 조회해서 보유종목및 수익률 확인 )         
+        #TODO 3. (좌니) 잔고조회 (현재 잔고 조회해서 보유종목및 수익률 확인 ) (완료)        
 	
      
         self.kiwoom.CommRqData( "RQName"	,  "opw00018"	,  "0"	,  "0391"); 
-        result =  self.kiwoom.ret_data['opw00018']           
+        result =  self.kiwoom.ret_data['opw00018']    
+        print(result)
+        for stock in result['Data']:
+            print('----------------')
+            
+            print('종목번호',stock['종목번호'])
+            print('종목명',stock['종목명'])
+            print('보유수량',stock['보유수량'])
+            print('수익률',stock['수익률(%)'])
+            print('현재가',stock['현재가'])
+            print('매입가',stock['매입가'])      
+
         
 
         #TODO 4. (좌니) 다음날 매수 종목 미리 서칭 기능(거래량 , 상승률, 뉴스 등 포함) 
