@@ -1,16 +1,21 @@
 import sys
 from PyQt5.QtWidgets import *
 
+import FinanceDataReader as fdr
+
 from Config import *
 from PyQt5.QtCore import *
 from PyQt5.QAxContainer import *
 from PyQt5 import QtTest
 import KiwoomAPI
+import MathAPI
 
 class KiwoonMain:
     def __init__(self):
         self.kiwoom = KiwoomAPI.KiwoomAPI()
         self.kiwoom.CommConnect()
+        
+        self.mathsub = MathAPI.MathAPI()
 
 # ========== #
     def GetLoginInfo(self):
@@ -28,8 +33,8 @@ class KiwoonMain:
 
     def myAccount(self):
         self.kiwoom.output_list = output_list['OPW00018']        
-        self.kiwoom.SetInputValue("계좌번호"	,  '8156235411')
-        self.kiwoom.SetInputValue("비밀번호"	,  '0217')
+        self.kiwoom.SetInputValue("계좌번호"	,  '')
+        self.kiwoom.SetInputValue("비밀번호"	,  '')
           
         self.kiwoom.SetInputValue("비밀번호입력매체구분"	,  "00")
         self.kiwoom.SetInputValue("조회구분"	,  "2")
@@ -77,6 +82,12 @@ class KiwoonMain:
                     # 호가 -1% 이상 넘으면 매도, (손절)
                     # 5분봉기준 전봉 거래량 기준 60% 이상 하락시 매도, (익절)
                     # 5분봉기준 5일선 데드크로스시 매도
+
+        df = fdr.DataReader('005930')
+        df = df.rename(columns=lambda col:col.lower())           
+            
+        data = self.mathsub.GetIndicator(df)
+        print(data)
 
         #TODO 3. (좌니) 잔고조회 (현재 잔고 조회해서 보유종목및 수익률 확인 ) (완료)        
 	
