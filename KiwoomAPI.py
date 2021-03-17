@@ -5,6 +5,7 @@ import time
 import win32gui
 import win32con 
 import win32api
+import Sqlite3Conn
 
 TR_REQ_TIME_INTERVAL = 0.2
 
@@ -15,6 +16,13 @@ class KiwoomAPI(QAxWidget):
         self.ret_data = {}
         self.set_kiwoom_api()
         self.set_event_slot()
+        self.sqlConn = Sqlite3Conn.SQL_CONNECT()  ##DB
+
+        user = self.sqlConn.SQL_UserSelect('USER') 
+        self.userName = user[1].strip()
+        self.accNum = user[2].strip()
+        self.passId = user[3].strip()
+        self.passAcc = user[4].strip()
 
 # ========== #
     def set_kiwoom_api(self):
@@ -27,6 +35,8 @@ class KiwoomAPI(QAxWidget):
         # 로그인 버전처리
         self.OnEventConnect.connect(self.E_OnEventConnect)
         self.OnReceiveTrData.connect(self.E_OnReceiveTrData)
+
+
         
 
 # ========== #
@@ -156,7 +166,7 @@ class KiwoomAPI(QAxWidget):
             if hwnd != 0:
                 # 비밀번호등록
                 edit = win32gui.GetDlgItem(hwnd, 0xCC)
-                win32gui.SendMessage(edit, win32con.WM_SETTEXT, 0, '0217')
+                win32gui.SendMessage(edit, win32con.WM_SETTEXT, 0, self.passAcc)
 
                 # 전체계좌에 등록
                 win32api.Sleep(100)

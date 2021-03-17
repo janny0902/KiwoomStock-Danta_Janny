@@ -11,12 +11,13 @@ import KiwoomAPI
 import MathAPI
 import pandas as pd
 
+
 class KiwoonMain:
     def __init__(self):
         self.kiwoom = KiwoomAPI.KiwoomAPI()
         self.kiwoom.CommConnect()
         
-        self.mathsub = MathAPI.MathAPI()
+        self.mathsub = MathAPI.MathAPI() 
 
 # ========== #
     def GetLoginInfo(self):
@@ -34,20 +35,21 @@ class KiwoonMain:
 
     def myAccount(self):
         self.kiwoom.output_list = output_list['OPW00018']        
-        self.kiwoom.SetInputValue("계좌번호"	,  '8156235411')
-        self.kiwoom.SetInputValue("비밀번호"	,  '0217')
+        self.kiwoom.SetInputValue("계좌번호"	,  self.kiwoom.accNum)
+        self.kiwoom.SetInputValue("비밀번호"	,   self.kiwoom.passAcc)
           
         self.kiwoom.SetInputValue("비밀번호입력매체구분"	,  "00")
         self.kiwoom.SetInputValue("조회구분"	,  "2")
         QTimer.singleShot(2 * 1000, self.kiwoom.auto_on)
         self.kiwoom.dynamicCall("KOA_Functions(QString, QString)", "ShowAccountWindow", "")
         self.kiwoom.wait_secs("계좌입력 시도", 1)
+        
       
 
     def run(self):
         ## 스케줄러 돌리기전 기본 시작 기능들 (로그인,계좌입력 등 기능)
         result = api_con.GetLoginInfo()  #로그인( TODO 자동으로 변경 필요)
-        api_con.myAccount()              #계좌입력(자동 완성)
+        api_con.myAccount()              #계좌입력(자동 완성)        
         ####------------------------####
 
         #### 주식 단타 프로그램 가이드 ####
@@ -65,7 +67,7 @@ class KiwoonMain:
 
         #TODO 1. (정세현) 스케줄러 적용  구글에 python 스케줄러 라고 검색하면  사용 방법 나옴  10초에 한번식 print('성공') 찍는 기능 만들기
                     #매일 오후 3시 15분에 print('매도') 찍기 기능  
-                    print('매도')
+        print('매도')
 
         #TODO 1-2. (윤학) 종목 서칭 (거래 순위 상위 10등 종목 나열, 실시간 검색 순위 없음 > 10위권 진입 종목 캐치)
 
