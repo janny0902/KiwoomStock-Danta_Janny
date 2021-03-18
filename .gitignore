@@ -9,6 +9,7 @@ __pycache__/
 *$py.class
 .venv
 venv
+.venv/
 venv/
 # C extensions
 *.so
