@@ -93,6 +93,7 @@ class KiwoonMain:
        
         data = self.mathsub.GetIndicator(df)
         print(data)    
+       
 
         #self.kiwoom.SetInputValue("종목코드",  "005930")
         #self.kiwoom.SetInputValue("틱범위",   "5")
@@ -116,7 +117,17 @@ class KiwoonMain:
            
             for key, val in self.kiwoom.latest_tr_data.items():
                 ohlcv[key][-1:] = val
-        
+        data_min = pd.DataFrame.from_dict(ohlcv)
+        data_min.sort_values(by=['date'], axis=0, inplace=True)
+        print(data_min)
+        print("-----------------")
+        data_min = self.mathsub.GetIndicator(data_min)
+        print(data_min)
+
+        #print(data_min.iloc[-1]['date'])   -1은 현재봉 값변화중 
+        #print(data_min.iloc[-1]['SMA5'])
+        #print(data_min.iloc[-1]['SMA10'])
+        #print(data_min.iloc[-1]['SMA20'])
 
         #TODO 3. (좌니) 잔고조회 (현재 잔고 조회해서 보유종목및 수익률 확인 ) (완료)        
 	

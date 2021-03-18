@@ -43,20 +43,20 @@ class MathAPI:
             
             # 이동 평균 선
             data['SMA5'] = ta.SMA(arrClose, 5)
-            # data['SMA10'] = talib.SMA(arrClose, 10)
-            data['SMA15'] = ta.SMA(arrClose, 15)
-            # data['SMA20'] = talib.SMA(arrClose, 20)
+            data['SMA10'] = ta.SMA(arrClose, 10)
+            #data['SMA15'] = ta.SMA(arrClose, 15)
+            data['SMA20'] = ta.SMA(arrClose, 20)
             data['SMA60'] = ta.SMA(arrClose, 60)
             data['SMA120'] = ta.SMA(arrClose, 120)
 
             # 골든 크로스
             data.insert(len(data.columns), "GAP_SMA5_trade", data['SMA5'] - data['close'])
-            data.insert(len(data.columns), "GAP_SMA15_SMA5", data['SMA15'] - data['SMA5'])
+            data.insert(len(data.columns), "GAP_SMA10_SMA5", data['SMA10'] - data['SMA5'])
             data.insert(len(data.columns), "GAP_SMA60_SMA5", data['SMA60'] - data['SMA5'])
             data.insert(len(data.columns), "GAP_SMA120_SMA60", data['SMA120'] - data['SMA60'])
 
             data['State_SMA5_trade'] = ['LOW' if s > 0 else 'HIGH' for s in data['GAP_SMA5_trade']] 
-            data['State_SMA15_SMA5'] = ['LOW' if s > 0 else 'HIGH' for s in data['GAP_SMA15_SMA5']] 
+            data['State_SMA10_SMA5'] = ['LOW' if s > 0 else 'HIGH' for s in data['GAP_SMA10_SMA5']] 
             data['State_SMA60_SMA5'] = ['LOW' if s > 0 else 'HIGH' for s in data['GAP_SMA60_SMA5']]
             data['State_SMA120_SMA60'] = ['LOW' if s > 0 else 'HIGH' for s in data['GAP_SMA120_SMA60']]
 
