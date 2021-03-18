@@ -7,7 +7,7 @@ import win32con
 import win32api
 import Sqlite3Conn
 
-TR_REQ_TIME_INTERVAL = 0.2
+TR_REQ_TIME_INTERVAL = 0.3
 
 class KiwoomAPI(QAxWidget):
     def __init__ (self):
@@ -35,7 +35,7 @@ class KiwoomAPI(QAxWidget):
         # 로그인 버전처리
         self.OnEventConnect.connect(self.E_OnEventConnect)
         self.OnReceiveTrData.connect(self.E_OnReceiveTrData)
-
+        
 
         
 
@@ -76,16 +76,21 @@ class KiwoomAPI(QAxWidget):
     def E_OnReceiveTrData(self, sScrNo, sRQName, sTrCode, sRecordName, sPrevNext, nDataLength, sErrorCode, sMessage, sSplmMsg):
         print(sScrNo, sRQName, sTrCode, sRecordName, sPrevNext, nDataLength, sErrorCode, sMessage, sSplmMsg)
 
-        # self.Check_sRQName(sTrCode, sRQName)
-        self.Call_TR(sTrCode, sRQName)
-        
-        self.event_loop_CommRqData.exit()
+        if sRQName == 'opt10080_req':            
+            self._on_receive_tr_data(sScrNo, sRQName, sTrCode, sRecordName, sPrevNext, nDataLength, sErrorCode, sMessage, sSplmMsg)
+        else:
+            self.Call_TR(sTrCode, sRQName)
+            
+            self.event_loop_CommRqData.exit()
 
     ####단일 종목 요청 함수
     def CommRqData(self, sRQName, sTrCode, nPrevNext, sScreenNo):
+        
         ret = self.dynamicCall('CommRqData(String, String, int, String)', sRQName, sTrCode, nPrevNext, sScreenNo)
+        
         self.event_loop_CommRqData = QEventLoop()
         self.event_loop_CommRqData.exec_()   
+        time.sleep(TR_REQ_TIME_INTERVAL)
         
     ####시간 대기 함수
     def wait_secs(self,msg, secs=10):        
@@ -185,4 +190,39 @@ class KiwoomAPI(QAxWidget):
         except Exception as e:
             print(e)   
 
-    
+    def _on_receive_tr_data(self, screen_no, rqname, trcode, record_name, next,
+                            unused1, unused2, unused3, unused4):
+        import tr_receive_handler as tr
+
+        self.latest_tr_data = None
+
+        if next == '2':
+            self.is_tr_data_remained = True
+        else:
+            
+            self.is_tr_data_remained = False
+
+        if rqname == "opt10081_req":
+            self.latest_tr_data = tr.on_receive_opt10081(self, rqname, trcode)
+        elif rqname == "opt10080_req":
+            self.latest_tr_data = tr.on_receive_opt10080(self, rqname, trcode)
+
+        try:
+            self.event_loop_CommRqData.exit() 
+                    
+            
+        except AttributeError:            
+            pass
+
+    def get_repeat_cnt(self, trcode, rqname):
+        ret = self.dynamicCall("GetRepeatCnt(QString, QString)", trcode, rqname)
+        return ret
+
+    def comm_get_data(self, code, real_type, field_name, index, item_name):
+        ret = self.dynamicCall("CommGetData(QString, QString, QString, int, QString)", code,
+                               real_type, field_name, index, item_name)
+        return ret.strip()
+
+   
+   
+        

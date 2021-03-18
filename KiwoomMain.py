@@ -93,14 +93,40 @@ class KiwoonMain:
        
         data = self.mathsub.GetIndicator(df)
         print(data)    
-        
-        
+
+        #self.kiwoom.SetInputValue("종목코드",  "005930")
+        #self.kiwoom.SetInputValue("틱범위",   "5")
+        #self.kiwoom.SetInputValue("수정주가구분	"	,   "1")        
+        #self.kiwoom.CommRqData( "RQName"	,  "opt10080"	,  "0"	,  "0391"); 
+        #result_min =  self.kiwoom.ret_data['opt10080']    
+        #print(result_min)        
+       ##---------------
+
+        self.kiwoom.SetInputValue("종목코드",  "005930")
+        self.kiwoom.SetInputValue("틱범위",   "5")
+        self.kiwoom.SetInputValue("수정주가구분	"	,   "1")        
+        self.kiwoom.CommRqData("opt10080_req", "opt10080", 0, "0101")
+        ohlcv = self.kiwoom.latest_tr_data
+
+        while self.kiwoom.is_tr_data_remained == True:
+            self.kiwoom.SetInputValue("종목코드",  "005930")
+            self.kiwoom.SetInputValue("틱범위",   "5")
+            self.kiwoom.SetInputValue("수정주가구분	"	,   "1")      
+            self.kiwoom.CommRqData("opt10080_req", "opt10080", 2, "0101")
+           
+            for key, val in self.kiwoom.latest_tr_data.items():
+                ohlcv[key][-1:] = val
         
 
         #TODO 3. (좌니) 잔고조회 (현재 잔고 조회해서 보유종목및 수익률 확인 ) (완료)        
 	
+        self.kiwoom.SetInputValue("계좌번호"	,  self.kiwoom.accNum)
+        self.kiwoom.SetInputValue("비밀번호"	,   self.kiwoom.passAcc)
+          
+        self.kiwoom.SetInputValue("비밀번호입력매체구분"	,  "00")
+        self.kiwoom.SetInputValue("조회구분"	,  "2")
+        self.kiwoom.CommRqData( "RQName"    ,  "opw00018"	,  "0"	,  "0391"); 
         
-        self.kiwoom.CommRqData( "RQName"	,  "opw00018"	,  "0"	,  "0391"); 
         result =  self.kiwoom.ret_data['opw00018']    
         print(result)
 
