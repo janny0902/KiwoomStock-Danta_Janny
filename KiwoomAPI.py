@@ -23,6 +23,7 @@ class KiwoomAPI(QAxWidget):
         self.accNum = user[2].strip()
         self.passId = user[3].strip()
         self.passAcc = user[4].strip()
+        self.userId = user[6].strip()
 
 # ========== #
     def set_kiwoom_api(self):
@@ -49,7 +50,7 @@ class KiwoomAPI(QAxWidget):
     def E_OnEventConnect(self, nErrCode):
         print(nErrCode)
 
-        self.event_loop_CommConnect.exit()
+        self.login_event_loop.exit()
 
 # ========== #
     ### OpenAPI 함수 ###
@@ -65,6 +66,27 @@ class KiwoomAPI(QAxWidget):
         ret = self.dynamicCall('GetConnectState()')
 
         print(ret)
+
+    #### 자동 로그인 구현
+    def comm_connect(self):
+        self.dynamicCall("CommConnect()")
+        self.login_event_loop = QEventLoop()
+        print("수동 로그인 함수 호출")
+        
+        self.wait_secs("로그인시도", 3)
+        hwnd = self.find_window("Open API Login")
+        edit_id = win32gui.GetDlgItem(hwnd, 0x3E8)
+        edit_pass = win32gui.GetDlgItem(hwnd, 0x3E9)
+        edit_cert = win32gui.GetDlgItem(hwnd, 0x3EA)
+        button = win32gui.GetDlgItem(hwnd, 0x1)
+
+        print(self.userId)
+        print(self.passId)
+        self.enter_keys(edit_id, self.userId)
+        self.enter_keys(edit_pass, self.passId)
+        self.enter_keys(edit_cert, self.passAcc)
+        self.click_button(button)
+        self.login_event_loop.exec_()
 
     #### 로그인 정보 조회 함수
     def GetLoginInfo(self, kind=''):
@@ -222,7 +244,10 @@ class KiwoomAPI(QAxWidget):
         ret = self.dynamicCall("CommGetData(QString, QString, QString, int, QString)", code,
                                real_type, field_name, index, item_name)
         return ret.strip()
+  
 
-   
-   
+    def enter_keys(self,hwnd, data):
+        win32api.SendMessage(hwnd, win32con.EM_SETSEL, 0, -1) 
+        win32api.SendMessage(hwnd, win32con.EM_REPLACESEL, 0, data) 
         
+

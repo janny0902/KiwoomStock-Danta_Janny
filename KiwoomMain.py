@@ -15,9 +15,13 @@ import pandas as pd
 class KiwoonMain:
     def __init__(self):
         self.kiwoom = KiwoomAPI.KiwoomAPI()
-        self.kiwoom.CommConnect()
+        #self.kiwoom.CommConnect()
         
-        self.mathsub = MathAPI.MathAPI() 
+        self.mathsub = MathAPI.MathAPI()             
+      
+
+        
+        self.kiwoom.comm_connect()  ##자동로그인 
 
 # ========== #
     def GetLoginInfo(self):
@@ -92,37 +96,21 @@ class KiwoonMain:
         df = df.rename(columns=lambda col:col.lower())           
        
         data = self.mathsub.GetIndicator(df)
-        print(data)    
+        print(data)     ##일봉 데이터
        
 
-        #self.kiwoom.SetInputValue("종목코드",  "005930")
-        #self.kiwoom.SetInputValue("틱범위",   "5")
-        #self.kiwoom.SetInputValue("수정주가구분	"	,   "1")        
-        #self.kiwoom.CommRqData( "RQName"	,  "opt10080"	,  "0"	,  "0391"); 
-        #result_min =  self.kiwoom.ret_data['opt10080']    
-        #print(result_min)        
-       ##---------------
-
         self.kiwoom.SetInputValue("종목코드",  "005930")
-        self.kiwoom.SetInputValue("틱범위",   "5")
+        self.kiwoom.SetInputValue("틱범위",   "3")
         self.kiwoom.SetInputValue("수정주가구분	"	,   "1")        
         self.kiwoom.CommRqData("opt10080_req", "opt10080", 0, "0101")
         ohlcv = self.kiwoom.latest_tr_data
 
-        while self.kiwoom.is_tr_data_remained == True:
-            self.kiwoom.SetInputValue("종목코드",  "005930")
-            self.kiwoom.SetInputValue("틱범위",   "5")
-            self.kiwoom.SetInputValue("수정주가구분	"	,   "1")      
-            self.kiwoom.CommRqData("opt10080_req", "opt10080", 2, "0101")
-           
-            for key, val in self.kiwoom.latest_tr_data.items():
-                ohlcv[key][-1:] = val
+        
         data_min = pd.DataFrame.from_dict(ohlcv)
-        data_min.sort_values(by=['date'], axis=0, inplace=True)
-        print(data_min)
-        print("-----------------")
+        data_min.sort_values(by=['date'], axis=0, inplace=True)  #data_min 역순 정렬  최근데이터 하단으로
+       
         data_min = self.mathsub.GetIndicator(data_min)
-        print(data_min)
+        print(data_min)   ##분봉데이터
 
         #print(data_min.iloc[-1]['date'])   -1은 현재봉 값변화중 
         #print(data_min.iloc[-1]['SMA5'])
@@ -141,13 +129,13 @@ class KiwoonMain:
         result =  self.kiwoom.ret_data['opw00018']    
         print(result)
 
-        #for stock in result['Data']:
+        for stock in result['Data']:
         #    print('----------------')
             
         #    print('종목번호',stock['종목번호'])
         #    print('종목명',stock['종목명'])
         #    print('보유수량',stock['보유수량'])
-        #    print('수익률',stock['수익률(%)'])
+            print('수익률',stock['수익률(%)'])
         #    print('현재가',stock['현재가'])
         #    print('매입가',stock['매입가'])      
 
