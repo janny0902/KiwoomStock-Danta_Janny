@@ -49,6 +49,30 @@ class KiwoonMain:
         self.kiwoom.wait_secs("계좌입력 시도", 1)
         
       
+    def myAccountSh(self): ## 계좌 조회
+        #TODO 3. (좌니) 잔고조회 (현재 잔고 조회해서 보유종목및 수익률 확인 ) (완료)        
+	
+        self.kiwoom.SetInputValue("계좌번호"	,  self.kiwoom.accNum)
+        self.kiwoom.SetInputValue("비밀번호"	,   self.kiwoom.passAcc)
+          
+        self.kiwoom.SetInputValue("비밀번호입력매체구분"	,  "00")
+        self.kiwoom.SetInputValue("조회구분"	,  "2")
+        self.kiwoom.CommRqData( "RQName"    ,  "opw00018"	,  "0"	,  "0391"); 
+        
+        result =  self.kiwoom.ret_data['opw00018']    
+        
+        ##result 사용법
+        #for stock in result['Data']:
+        #    print('----------------')
+            
+        #    print('종목번호',stock['종목번호'])
+        #    print('종목명',stock['종목명'])
+        #    print('보유수량',stock['보유수량'])
+        #    print('수익률',stock['수익률(%)'])
+        #    print('현재가',stock['현재가'])
+        #    print('매입가',stock['매입가'])    
+        return result 
+
 
     def run(self):
         ## 스케줄러 돌리기전 기본 시작 기능들 (로그인,계좌입력 등 기능)
@@ -88,9 +112,17 @@ class KiwoonMain:
 
         #TODO 2-2-1 (좌니) 키움 종목 매도 기능 - 조건 설정  
                     # 호가 -1% 이상 넘으면 매도, (손절)
-                    # 5분봉기준 전봉 거래량 기준 60% 이상 하락시 매도, (익절)
-                    # 5분봉기준 5일선 데드크로스시 매도
+        result  = self.myAccountSh()   
+        for stock in result['Data']:
+            if stock['수익률(%)'][0] =='-':
+                if int(stock['수익률(%)'][-4])>=1:
+                    print(stock['종목명'])
+                    print("-1% 손해시 매도!")
 
+                    # 5분봉기준 전봉 거래량 기준 60% 이상 하락시 매도, (익절)(좀더 파악)
+                    
+        # 5분봉기준 5일선 데드크로스시 매도(완료)
+        ##데이터 수신 
         #fdr = naver stock 데이터
         df = fdr.DataReader('005930')
         df = df.rename(columns=lambda col:col.lower())           
@@ -112,33 +144,18 @@ class KiwoonMain:
         data_min = self.mathsub.GetIndicator(data_min)
         print(data_min)   ##분봉데이터
 
+
+
         #print(data_min.iloc[-1]['date'])   -1은 현재봉 값변화중 
-        #print(data_min.iloc[-1]['SMA5'])
+        print(data_min.iloc[-1]['SMA5'])
+        print(data_min.iloc[-1]['close'])
+        if int(data_min.iloc[-1]['close']) < int(data_min.iloc[-1]['SMA5']):
+            print("5일선 데드크로스 매도!") 
         #print(data_min.iloc[-1]['SMA10'])
         #print(data_min.iloc[-1]['SMA20'])
 
-        #TODO 3. (좌니) 잔고조회 (현재 잔고 조회해서 보유종목및 수익률 확인 ) (완료)        
-	
-        self.kiwoom.SetInputValue("계좌번호"	,  self.kiwoom.accNum)
-        self.kiwoom.SetInputValue("비밀번호"	,   self.kiwoom.passAcc)
           
-        self.kiwoom.SetInputValue("비밀번호입력매체구분"	,  "00")
-        self.kiwoom.SetInputValue("조회구분"	,  "2")
-        self.kiwoom.CommRqData( "RQName"    ,  "opw00018"	,  "0"	,  "0391"); 
         
-        result =  self.kiwoom.ret_data['opw00018']    
-        print(result)
-
-        for stock in result['Data']:
-        #    print('----------------')
-            
-        #    print('종목번호',stock['종목번호'])
-        #    print('종목명',stock['종목명'])
-        #    print('보유수량',stock['보유수량'])
-            print('수익률',stock['수익률(%)'])
-        #    print('현재가',stock['현재가'])
-        #    print('매입가',stock['매입가'])      
-
         
 
         #TODO 4. (좌니) 다음날 매수 종목 미리 서칭 기능(거래량 , 상승률, 뉴스 등 포함) 
