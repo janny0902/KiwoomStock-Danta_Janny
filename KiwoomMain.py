@@ -59,7 +59,7 @@ class KiwoonMain:
         self.kiwoom.SetInputValue("조회구분"	,  "2")
         self.kiwoom.CommRqData( "RQName0"    ,  "opw00018"	,  "0"	,  "0391"); 
         
-        result =  self.kiwoom.ret_data['opw00018']    
+        result =  self.kiwoom.ret_data['opw00018']      
         
         ##result 사용법
         #for stock in result['Data']:
