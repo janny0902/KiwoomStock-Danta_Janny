@@ -114,6 +114,7 @@ class KiwoomAPI(QAxWidget):
         self.event_loop_CommRqData.exec_()   
         time.sleep(TR_REQ_TIME_INTERVAL)
         
+        
     ####시간 대기 함수
     def wait_secs(self,msg, secs=10):        
         while secs > 0:
@@ -155,6 +156,8 @@ class KiwoomAPI(QAxWidget):
                 temp_list.append(temp_dict)
             
             self.ret_data[strTrCode]['Data'] = temp_list
+
+        
             
     ####화면 찾기 기능
     def find_window(self,caption):

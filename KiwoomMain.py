@@ -57,7 +57,7 @@ class KiwoonMain:
           
         self.kiwoom.SetInputValue("비밀번호입력매체구분"	,  "00")
         self.kiwoom.SetInputValue("조회구분"	,  "2")
-        self.kiwoom.CommRqData( "RQName"    ,  "opw00018"	,  "0"	,  "0391"); 
+        self.kiwoom.CommRqData( "RQName0"    ,  "opw00018"	,  "0"	,  "0391"); 
         
         result =  self.kiwoom.ret_data['opw00018']    
         
@@ -102,6 +102,70 @@ class KiwoonMain:
         #TODO 1-3. (좌니) 종목 서칭2 (거래상위 10위 중 거래 할 대상 선정 1~2종목 그래프 보면서 좋은자리 찾아야함.)
                     #5분봉기준 전봉 대비 거래대금 *2 터진종목 우선 
 
+
+        print('테스트')
+        #OPT10030  당일 거래량 상위 요청
+        ##시장구분 = 000:전체, 001:코스피, 101:코스닥
+        ##관리종목포함 = 0:관리종목 미포함, 1:관리종목 포함
+        ##정렬구분 = 1:거래량, 2:거래회전율, 3:거래대금
+	
+        self.kiwoom.SetInputValue("시장구분"	,  '000')
+        self.kiwoom.SetInputValue("정렬구분"	,  "1")
+        self.kiwoom.SetInputValue("관리종목포함"	,   '14')
+        self.kiwoom.wait_secs("계좌입력 시도", 1)
+        self.kiwoom.CommRqData( "RQName"    ,  "OPT10030"	,  "0"	,  "0101")
+        
+        result_Toplist =  self.kiwoom.ret_data['OPT10030']    
+        print(result_Toplist['Data'][0]['종목명'].lstrip())
+        print(result_Toplist['Data'][1]['종목명'].lstrip())
+        print(result_Toplist['Data'][2]['종목명'].lstrip())
+
+        print("---------------------")
+        
+        #OPT10032 거래대금 상위 요청
+
+        print("test1")
+        #OPT10065 장중투자자별 매매상위요청
+        #매매구분 = 1:순매수, 2:순매도
+        self.kiwoom.SetInputValue("매매구분","1")
+        #시장구분 = 000:전체, 001:코스피, 101:코스닥    
+        self.kiwoom.SetInputValue("시장구분",  "000")
+        #기관구분 = 9000:외국인, 9100:외국계, 1000:금융투자, 3000:투신, 5000:기타금융, 4000:은행, 2000:보험, 6000:연기금, 7000:국가, 7100:기타법인, 9999:기관계
+        self.kiwoom.SetInputValue("기관구분",  "9000")
+        
+        self.kiwoom.CommRqData( "RQName1"    ,  "OPT10065",  "0"	,  "0101")
+        result_marketTop =  self.kiwoom.ret_data['OPT10065']
+        print(result_marketTop)
+        print("----------------------")
+        
+        
+        #opt90003  프로그램순매수 상위50 요청           
+        #매매상위구분 = 1:순매도상위, 2:순매수상위
+        print('test2')
+        self.kiwoom.SetInputValue("매매상위구분"	,  "2")
+        #금액수량구분 = 1:금액, 2:수량
+        self.kiwoom.SetInputValue("금액수량구분"	,  "1")
+        #시장구분 = P00101:코스피, P10102:코스닥
+        self.kiwoom.SetInputValue("시장구분"	,  "P00101")
+        
+        self.kiwoom.CommRqData( "RQName2"    ,  "opt90003"	,  "0"	,  "0101")
+        result_Program_1 =  self.kiwoom.ret_data['opt90003']
+
+        self.kiwoom.SetInputValue("매매상위구분"	,  "2")
+        #금액수량구분 = 1:금액, 2:수량
+        self.kiwoom.SetInputValue("금액수량구분"	,  "1")
+        #시장구분 = P00101:코스피, P10102:코스닥
+        self.kiwoom.SetInputValue("시장구분"	,  "P10102")
+        
+        self.kiwoom.CommRqData( "RQName3"    ,  "opt90003"	,  "0"	,  "0101")
+        result_Program_2 =  self.kiwoom.ret_data['opt90003']
+
+        print(result_Program_1)
+        print(result_Program_2)
+
+        print("--------------------")
+
+
         #TODO 1-3-1. (정세현) 키움종목 매수 기능 -조건 설정  talib 이용
                     #5분봉 기준 20일선 골드 크로스 매수  
 
@@ -111,7 +175,7 @@ class KiwoonMain:
         #TODO 2-2. (윤학) 키움 종목 매도 (한개 종목 코드를 입력하면 해당 종목 매도 기능 ) 
 
         #TODO 2-2-1 (좌니) 키움 종목 매도 기능 - 조건 설정  
-                    # 호가 -1% 이상 넘으면 매도, (손절)
+                    # 호가 -1% 이상 넘으면 매도, (손절)(완료)
         result  = self.myAccountSh()   
         for stock in result['Data']:
             if stock['수익률(%)'][0] =='-':
