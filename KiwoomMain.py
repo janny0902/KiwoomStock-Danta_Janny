@@ -46,7 +46,7 @@ class KiwoonMain:
         self.kiwoom.SetInputValue("조회구분"	,  "2")
         QTimer.singleShot(2 * 1000, self.kiwoom.auto_on)
         self.kiwoom.dynamicCall("KOA_Functions(QString, QString)", "ShowAccountWindow", "")
-        self.kiwoom.wait_secs("계좌입력 시도", 1)
+        self.kiwoom.wait_secs("계좌입력 시도", 1) 
         
       
     def myAccountSh(self): ## 계좌 조회
