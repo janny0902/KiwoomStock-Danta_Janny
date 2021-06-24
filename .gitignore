@@ -153,3 +153,5 @@ Thumbs.db #thumbnail cache on Windows
 
 
 # End of https://www.toptal.com/developers/gitignore/api/python
+__pycache__/Config.cpython-39.pyc
+__pycache__/KiwoomAPI.cpython-39.pyc
