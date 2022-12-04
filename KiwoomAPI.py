@@ -3,7 +3,7 @@ from PyQt5.QAxContainer import *
 from PyQt5.QtCore import *
 import time
 import win32gui
-import win32con 
+import win32con
 import win32api
 import Sqlite3Conn
 
@@ -18,7 +18,7 @@ class KiwoomAPI(QAxWidget):
         self.set_event_slot()
         self.sqlConn = Sqlite3Conn.SQL_CONNECT()  ##DB
 
-        user = self.sqlConn.SQL_UserSelect('USER') 
+        user = self.sqlConn.SQL_UserSelect('USER')
         self.userName = user[1].strip()
         self.accNum = user[2].strip()
         self.passId = user[3].strip()
@@ -36,9 +36,9 @@ class KiwoomAPI(QAxWidget):
         # 로그인 버전처리
         self.OnEventConnect.connect(self.E_OnEventConnect)
         self.OnReceiveTrData.connect(self.E_OnReceiveTrData)
-        
 
-        
+
+
 
 # ========== #
     ### Event 함수 ###
@@ -72,7 +72,7 @@ class KiwoomAPI(QAxWidget):
         self.dynamicCall("CommConnect()")
         self.login_event_loop = QEventLoop()
         print("수동 로그인 함수 호출")
-        
+
         self.wait_secs("로그인시도", 3)
         hwnd = self.find_window("Open API Login")
         edit_id = win32gui.GetDlgItem(hwnd, 0x3E8)
@@ -92,31 +92,31 @@ class KiwoomAPI(QAxWidget):
     def GetLoginInfo(self, kind=''):
         ret = self.dynamicCall('GetLoginInfo(String)', kind)
 
-        print(ret) 
-        
+        print(ret)
+
     ##주문 관련
     def E_OnReceiveTrData(self, sScrNo, sRQName, sTrCode, sRecordName, sPrevNext, nDataLength, sErrorCode, sMessage, sSplmMsg):
         print(sScrNo, sRQName, sTrCode, sRecordName, sPrevNext, nDataLength, sErrorCode, sMessage, sSplmMsg)
 
-        if sRQName == 'opt10080_req':            
+        if sRQName == 'opt10080_req':
             self._on_receive_tr_data(sScrNo, sRQName, sTrCode, sRecordName, sPrevNext, nDataLength, sErrorCode, sMessage, sSplmMsg)
         else:
             self.Call_TR(sTrCode, sRQName)
-            
+
             self.event_loop_CommRqData.exit()
 
     ####단일 종목 요청 함수
     def CommRqData(self, sRQName, sTrCode, nPrevNext, sScreenNo):
-        
+
         ret = self.dynamicCall('CommRqData(String, String, int, String)', sRQName, sTrCode, nPrevNext, sScreenNo)
-        
+
         self.event_loop_CommRqData = QEventLoop()
-        self.event_loop_CommRqData.exec_()   
+        self.event_loop_CommRqData.exec_()
         time.sleep(TR_REQ_TIME_INTERVAL)
-        
-        
+
+
     ####시간 대기 함수
-    def wait_secs(self,msg, secs=10):        
+    def wait_secs(self,msg, secs=10):
         while secs > 0:
             time.sleep(1)
             print(f"{msg} waiting: {secs}")
@@ -126,13 +126,13 @@ class KiwoomAPI(QAxWidget):
     def Call_TR(self, strTrCode, sRQName):
         self.ret_data[strTrCode] = {}
         self.ret_data[strTrCode]['Data'] = {}
-        
+
         self.ret_data[strTrCode]['TrCode'] = strTrCode
 
 
         count = self.GetRepeatCnt(strTrCode, sRQName)
         self.ret_data[strTrCode]['Count'] = count
-        
+
 
         if count == 0:
             temp_list = []
@@ -142,7 +142,7 @@ class KiwoomAPI(QAxWidget):
                 temp_dict[output] = data
 
             temp_list.append(temp_dict)
-            
+
             self.ret_data[strTrCode]['Data'] = temp_list
 
         if count >= 1:
@@ -154,11 +154,11 @@ class KiwoomAPI(QAxWidget):
                     temp_dict[output] = data
 
                 temp_list.append(temp_dict)
-            
+
             self.ret_data[strTrCode]['Data'] = temp_list
 
-        
-            
+
+
     ####화면 찾기 기능
     def find_window(self,caption):
         hwnd = win32gui.FindWindow(None, caption)
@@ -179,7 +179,7 @@ class KiwoomAPI(QAxWidget):
         windows = []
         win32gui.EnumWindows(self.window_enumeration_handler, windows)
         return windows
-    
+
     ##화면 내 버튼 클릭 이벤트
     def click_button(self,btn_hwnd):
         #win32api.SendMessage(btn_hwnd, win32con.BM_CLICK, 0, 0)
@@ -190,7 +190,7 @@ class KiwoomAPI(QAxWidget):
 
     ####자동 입력 기능
     def auto_on(self):
-        try:                 
+        try:
 
             hwnd = self.find_window("계좌비밀번호")
             if hwnd != 0:
@@ -203,7 +203,7 @@ class KiwoomAPI(QAxWidget):
                 button_register_all = win32gui.GetDlgItem(hwnd, 0xD4)
                 self.click_button(button_register_all)
 
-                # 체크박스 체크 
+                # 체크박스 체크
                 #checkbox = win32gui.GetDlgItem(hwnd, 0xD3)
                 #checked = win32gui.SendMessage(checkbox, win32con.BM_GETCHECK)
                 #if not checked:
@@ -213,7 +213,7 @@ class KiwoomAPI(QAxWidget):
                 button= win32gui.GetDlgItem(hwnd, 0x01)
                 self.click_button(button)
         except Exception as e:
-            print(e)   
+            print(e)
 
     def _on_receive_tr_data(self, screen_no, rqname, trcode, record_name, next,
                             unused1, unused2, unused3, unused4):
@@ -224,7 +224,7 @@ class KiwoomAPI(QAxWidget):
         if next == '2':
             self.is_tr_data_remained = True
         else:
-            
+
             self.is_tr_data_remained = False
 
         if rqname == "opt10081_req":
@@ -233,10 +233,10 @@ class KiwoomAPI(QAxWidget):
             self.latest_tr_data = tr.on_receive_opt10080(self, rqname, trcode)
 
         try:
-            self.event_loop_CommRqData.exit() 
-                    
-            
-        except AttributeError:            
+            self.event_loop_CommRqData.exit()
+
+
+        except AttributeError:
             pass
 
     def get_repeat_cnt(self, trcode, rqname):
@@ -247,10 +247,10 @@ class KiwoomAPI(QAxWidget):
         ret = self.dynamicCall("CommGetData(QString, QString, QString, int, QString)", code,
                                real_type, field_name, index, item_name)
         return ret.strip()
-  
+
 
     def enter_keys(self,hwnd, data):
-        win32api.SendMessage(hwnd, win32con.EM_SETSEL, 0, -1) 
-        win32api.SendMessage(hwnd, win32con.EM_REPLACESEL, 0, data) 
-        
+        win32api.SendMessage(hwnd, win32con.EM_SETSEL, 0, -1)
+        win32api.SendMessage(hwnd, win32con.EM_REPLACESEL, 0, data)
+
 
